@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+.contenedor-800 {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contenedor-reportes {
+  max-width: 100%;
+}
+
+#tabla-reporte {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#tabla-reporte thead th {
+  background: #4285F4;
+  color: white;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  position: sticky;
+  top: 0;
+  text-align: center;
+}
+
+#tabla-reporte tbody tr:nth-child(even) {
+  background: #f8f9fb;
+}
+
+#tabla-reporte tbody tr:hover {
+  background: #eef2ff;
+}
+
+#tabla-reporte td {
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  vertical-align: top;
+  text-align: center;
+}
+
+
+#form-reporte {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.campo-reporte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 160px;
+}
+
+.campo-reporte label {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.campo-reporte input,
+.campo-reporte select {
+  padding: 0.5rem;
+  border: 1px solid #cbd2d9;
+  border-radius: 4px;
+}
+
+section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+form {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+input {
+  padding: 0.5rem;
+  border: 1px solid #cbd2d9;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 150px;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.mensaje-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.btn-eliminar {
+  background: #dc2626;
+}
+
+.btn-eliminar:hover {
+  background: #b91c1c;
+}
+
+.btn-editar {
+  background: #6b7280;
+  margin-right: 0.5rem;
+}

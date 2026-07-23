@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeedTrack Web GMS - Iniciar sesión</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-wrapper">
+        <img src="img/logo.png" alt="FeedTrack Logo" id="logo">
+      </div>
+
+      <h1>FeedTrack</h1>
+      <p class="subtitulo">Ingresa tus credenciales para continuar</p>
+
+      <form id="form-login">
+        <div class="campo">
+          <label for="usuario">Usuario</label>
+          <input type="text" id="usuario" name="usuario" required autocomplete="username">
+        </div>
+
+        <div class="campo">
+          <label for="contrasena">Contraseña</label>
+          <input type="password" id="contrasena" name="contrasena" required autocomplete="current-password">
+        </div>
+
+        <div id="mensaje-error" class="mensaje-error" hidden></div>
+
+        <button type="submit" id="btn-login">Ingresar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeedTrack Web GMS - Inicio</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body data-page="inicio">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img src="img/logo.png" alt="FeedTrack">
+        <span>FeedTrack</span>
+      </div>
+      <nav>
+        <a href="index.html" data-page="inicio"> Inicio</a>
+        <a href="reportes.html" data-page="reportes"> Reportes / Estadísticas</a>
+      </nav>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <button id="btn-toggle-sidebar" class="btn-hamburger" aria-label="Mostrar/ocultar menú">☰</button>
+        <h1 id="page-title"></h1>
+        <div class="header-derecha">
+          <span id="usuario-actual"></span>
+          <button id="btn-logout">Cerrar sesión</button>
+        </div>
+      </header>
+
+      <main class="contenido">
+        <p>Bienvenido a FeedTrack Web GMS. Usa el menú lateral para navegar entre los módulos.</p>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/layout.js"></script>
+</body>
+</html>

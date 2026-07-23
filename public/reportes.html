@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeedTrack Web GMS - Reportes</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="reportes">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img src="img/logo.png" alt="FeedTrack">
+        <span>FeedTrack</span>
+      </div>
+      <nav>
+        <a href="index.html" data-page="inicio"> Inicio</a>
+        <a href="reportes.html" data-page="reportes"> Reportes / Estadísticas</a>
+      </nav>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <button id="btn-toggle-sidebar" class="btn-hamburger" aria-label="Mostrar/ocultar menú">☰</button>
+        <h1 id="page-title"></h1>
+        <div class="header-derecha">
+          <span id="usuario-actual"></span>
+          <button id="btn-logout">Cerrar sesión</button>
+        </div>
+      </header>
+
+      <main class="contenido">
+        <div class="contenedor-reportes">
+          <section class="formulario">
+            <h2>Reporte de Ración</h2>
+            <form id="form-reporte">
+              <div class="campo-reporte">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" required>
+              </div>
+              <div class="campo-reporte">
+                <label for="sector">Sector</label>
+                <select id="sector" required></select>
+              </div>
+              <div class="campo-reporte">
+                <label for="tipo-recipiente">Tipo de recipiente</label>
+                <select id="tipo-recipiente" required></select>
+              </div>
+              <button type="submit">Consultar</button>
+            </form>
+            <div id="mensaje-reporte" class="mensaje-error" hidden></div>
+          </section>
+
+          <section class="lista">
+            <h2>Resultados</h2>
+            <p id="resumen-filtros" style="color:#6b7280; margin-top:-0.5rem; margin-bottom:1rem;"></p>
+             <div style="display:flex; gap:0.75rem; margin-bottom:1rem;">
+                <button type="button" id="btn-exportar-excel" style="background:#0F9D58; color:white; border:none; padding:0.6rem 1rem; border-radius:6px; cursor:pointer;">📊 Exportar a Excel</button>
+                <button type="button" id="btn-copiar-imagen" style="background:#DB4437; color:white; border:none; padding:0.6rem 1rem; border-radius:6px; cursor:pointer;">🖼️ Copiar imagen</button>
+              </div>
+            <div style="overflow-x:auto">
+              <table id="tabla-reporte">
+                <thead>
+                  <tr>
+                    <th>Laguna - Modo Alimentación</th>
+                    <th>Ajuste 1</th>
+                    <th>Ajuste 2</th>
+                    <th>Ración</th>
+                    <th>Libras consumo</th>
+                    <th>%</th>
+                    <th>Lectura mañana</th>
+                    <th>Lectura tarde</th>
+                    <th>Ración día siguiente</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/layout.js"></script>
+  <script src="js/reportes.js"></script>
+</body>
+</html>

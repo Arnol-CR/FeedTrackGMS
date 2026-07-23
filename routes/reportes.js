@@ -1,0 +1,167 @@
+const express = require('express');
+const router = express.Router();
+const { sql, getPool } = require('../config/db');
+
+// GET /api/reportes/sectores -> lista de sectores para el combo
+router.get('/sectores', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query('SELECT * FROM P_V_Sectores');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al obtener sectores:', err);
+    res.status(500).json({ error: 'Error al obtener sectores', detalle: err.message });
+  }
+});
+
+// GET /api/reportes/tipos-recipientes -> lista de tipos de recipiente para el combo
+router.get('/tipos-recipientes', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query('SELECT * FROM P_V_TipoRecipientes');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al obtener tipos de recipiente:', err);
+    res.status(500).json({ error: 'Error al obtener tipos de recipiente', detalle: err.message });
+  }
+});
+
+// GET /api/reportes/racion?fecha=YYYY-MM-DD&idSector=1&idRecipiente=2
+router.get('/racion', async (req, res) => {
+  const { fecha, idSector, idRecipiente } = req.query;
+
+  if (!fecha || !idSector || !idRecipiente) {
+    return res.status(400).json({ error: 'Fecha, sector y tipo de recipiente son requeridos' });
+  }
+
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('Fecha', sql.Date, fecha)
+      .input('IdSector', sql.Int, idSector)
+      .input('IdRecipiente', sql.Int, idRecipiente)
+      .execute('sp_ReporteRacion');
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al generar el reporte de ración:', err);
+    res.status(500).json({ error: 'Error al generar el reporte', detalle: err.message });
+  }
+});
+
+// POST /api/reportes/racion  { idEstanque, fecha, racion }
+// Guarda/actualiza la ración de un estanque para una fecha (usado para
+// capturar la ración del día siguiente desde el reporte).
+router.post('/racion', async (req, res) => {
+  const { idEstanque, fecha, racion } = req.body;
+
+  if (!idEstanque || !fecha || racion === undefined || racion === null) {
+    return res.status(400).json({ error: 'idEstanque, fecha y racion son requeridos' });
+  }
+
+  try {
+    const pool = await getPool();
+    await pool.request()
+      .input('IdEstanque', sql.Int, idEstanque)
+      .input('Fecha', sql.Date, fecha)
+      .input('Racion', sql.Decimal(18, 2), racion)
+      .execute('SP_ActualizarOInsertarRacion');
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al guardar la ración:', err);
+    res.status(500).json({ error: 'Error al guardar la ración', detalle: err.message });
+  }
+});
+
+// GET /api/reportes/racion-existente?fecha=YYYY-MM-DD&idEstanques=1,2,3
+// Devuelve la Ración ya guardada en Consumos para esa fecha, para precargar
+// el campo "Ración día siguiente" en el reporte.
+router.get('/racion-existente', async (req, res) => {
+  const { fecha, idEstanques } = req.query;
+
+  if (!fecha || !idEstanques) {
+    return res.status(400).json({ error: 'fecha e idEstanques son requeridos' });
+  }
+
+  const ids = idEstanques.split(',').map(Number).filter(n => Number.isInteger(n));
+  if (ids.length === 0) {
+    return res.json([]);
+  }
+
+  try {
+    const pool = await getPool();
+    const request = pool.request().input('Fecha', sql.Date, fecha);
+    const placeholders = ids.map((id, i) => {
+      request.input(`id${i}`, sql.Int, id);
+      return `@id${i}`;
+    }).join(',');
+
+    const result = await request.query(
+      `SELECT IdEstanque, Racion FROM Consumos WHERE Fecha = @Fecha AND IdEstanque IN (${placeholders})`
+    );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al obtener raciones existentes:', err);
+    res.status(500).json({ error: 'Error al obtener raciones existentes', detalle: err.message });
+  }
+});
+
+// POST /api/reportes/ajustes  { idEstanque, fecha, ajuste1, ajuste2 }
+router.post('/ajustes', async (req, res) => {
+  const { idEstanque, fecha, ajuste1, ajuste2 } = req.body;
+
+  if (!idEstanque || !fecha) {
+    return res.status(400).json({ error: 'idEstanque y fecha son requeridos' });
+  }
+
+  try {
+    const pool = await getPool();
+    await pool.request()
+      .input('IdEstanque', sql.Int, idEstanque)
+      .input('Fecha', sql.Date, fecha)
+      .input('Ajuste1', sql.Decimal(18, 2), ajuste1 === '' || ajuste1 === undefined ? null : ajuste1)
+      .input('Ajuste2', sql.Decimal(18, 2), ajuste2 === '' || ajuste2 === undefined ? null : ajuste2)
+      .execute('sp_ActualizarAjustes');
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al guardar ajustes:', err);
+    res.status(500).json({ error: 'Error al guardar ajustes', detalle: err.message });
+  }
+});
+
+// GET /api/reportes/ajustes-existentes?fecha=YYYY-MM-DD&idEstanques=1,2,3
+router.get('/ajustes-existentes', async (req, res) => {
+  const { fecha, idEstanques } = req.query;
+
+  if (!fecha || !idEstanques) {
+    return res.status(400).json({ error: 'fecha e idEstanques son requeridos' });
+  }
+
+  const ids = idEstanques.split(',').map(Number).filter(n => Number.isInteger(n));
+  if (ids.length === 0) {
+    return res.json([]);
+  }
+
+  try {
+    const pool = await getPool();
+    const request = pool.request().input('Fecha', sql.Date, fecha);
+    const placeholders = ids.map((id, i) => {
+      request.input(`id${i}`, sql.Int, id);
+      return `@id${i}`;
+    }).join(',');
+
+    const result = await request.query(
+      `SELECT IdEstanque, Ajuste1, Ajuste2 FROM Consumos WHERE Fecha = @Fecha AND IdEstanque IN (${placeholders})`
+    );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al obtener ajustes existentes:', err);
+    res.status(500).json({ error: 'Error al obtener ajustes existentes', detalle: err.message });
+  }
+});
+
+module.exports = router;
