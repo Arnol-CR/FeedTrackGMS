@@ -71,7 +71,11 @@ form.addEventListener('submit', async (e) => {
       return;
     }
 
-    const filas = data.filter(f => Number(f.Racion) > 0);
+    const filas = data.filter(f =>
+      Number(f.Racion) > 0 ||
+      (f.LecturaMañana && f.LecturaMañana.trim() !== '') ||
+      (f.LecturaTarde && f.LecturaTarde.trim() !== '')
+    );
 
     if (filas.length === 0) {
       mostrarError('No hay datos para los filtros seleccionados');
