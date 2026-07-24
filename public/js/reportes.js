@@ -36,10 +36,15 @@ async function cargarCombos() {
     const sectores = await resSectores.json();
     const tipos = await resTipos.json();
 
-    selectSector.innerHTML = sectores
-      .filter(s => !obtenerEtiqueta(s, 'IdSector').toUpperCase().startsWith('TODA'))
-      .map(s => `<option value="${s.IdSector}">${obtenerEtiqueta(s, 'IdSector')}</option>`)
-      .join('');
+const SECTORES_EXCLUIDOS = ['EXPOMARE', 'LAS DELICIAS', 'ACUAGOLFO'];
+
+selectSector.innerHTML = sectores
+  .filter(s => {
+    const nombre = obtenerEtiqueta(s, 'IdSector').toUpperCase().trim();
+    return !nombre.startsWith('TODA') && !SECTORES_EXCLUIDOS.includes(nombre);
+  })
+  .map(s => `<option value="${s.IdSector}">${obtenerEtiqueta(s, 'IdSector')}</option>`)
+  .join('');
 
     selectTipoRecipiente.innerHTML = tipos.map(t =>
       `<option value="${t.IdTipoRecimiente}">${obtenerEtiqueta(t, 'IdTipoRecimiente')}</option>`
@@ -389,7 +394,7 @@ async function construirElementoParaImagen() {
   header.innerHTML = `
     <img src="img/logo.png" style="width:56px; height:56px;">
     <div>
-      <div style="font-size:22px; font-weight:700; color:#1f2933;">FeedTrack Web GMS</div>
+      <div style="font-size:22px; font-weight:700; color:#1f2933;">FeedTrack Web Rivermar</div>
       <div style="font-size:14px; color:#6b7280;">Reporte de Ración — Sector: ${textoSector} · Fecha: ${fechaFormateada}</div>
       <div style="font-size:13px; color:#6b7280;">Generado por: ${usuario}</div>
     </div>
