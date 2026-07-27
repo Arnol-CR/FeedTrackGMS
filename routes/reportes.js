@@ -213,7 +213,7 @@ router.get('/historial', async (req, res) => {
           ON C.IdEstanque = @IdEstanque AND C.Fecha = F.Fecha
         OUTER APPLY (
           SELECT TOP 1 Libras FROM DetallesConsumos
-          WHERE IdConsumo = C.IdConsumo AND HoraIngreso = 2
+          WHERE IdConsumo = C.IdConsumo AND HoraIngreso = 3
         ) DC
         OUTER APPLY (
           SELECT TOP 1 Observaciones FROM Lecturas
