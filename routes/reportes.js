@@ -164,4 +164,82 @@ router.get('/ajustes-existentes', async (req, res) => {
   }
 });
 
+
+
+
+// GET /api/reportes/historial?idEstanque=1&fecha=2026-07-24
+// Devuelve los últimos 6 días de consumo/lecturas de un estanque, incluyendo la fecha dada.
+router.get('/historial', async (req, res) => {
+  const { idEstanque, fecha } = req.query;
+
+  if (!idEstanque || !fecha) {
+    return res.status(400).json({ error: 'idEstanque y fecha son requeridos' });
+  }
+
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('IdEstanque', sql.Int, idEstanque)
+      .input('Fecha', sql.Date, fecha)
+      .query(`
+        SELECT TOP 6
+          C.Fecha,
+          ISNULL(C.Racion, 0) AS Racion,
+          ISNULL(DC.Libras, 0) AS LibrasConsumo,
+          CAST(
+            CASE
+              WHEN ISNULL(C.Racion, 0) <> 0
+              THEN (ISNULL(DC.Libras, 0) / C.Racion) * 100
+              ELSE 0
+            END
+          AS DECIMAL(18,2)) AS Porcentaje,
+          ISNULL(C.Ajuste1, 0) AS Ajuste1,
+          ISNULL(C.Ajuste2, 0) AS Ajuste2,
+          ISNULL(LM.Observaciones, '') AS LecturaMañana,
+          ISNULL(LT.Observaciones, '') AS LecturaTarde,
+          OM1.Oxigeno AS OxigenoManana,
+          OM3.Oxigeno AS OxigenoHora3,
+          TM1.Valor AS TemperaturaManana,
+          TM2.Valor AS TemperaturaTarde
+        FROM Consumos C
+        OUTER APPLY (
+          SELECT TOP 1 Libras FROM DetallesConsumos
+          WHERE IdConsumo = C.IdConsumo AND HoraIngreso = 3
+        ) DC
+        OUTER APPLY (
+          SELECT TOP 1 Observaciones FROM Lecturas
+          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 1
+        ) LM
+        OUTER APPLY (
+          SELECT TOP 1 Observaciones FROM Lecturas
+          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 2
+        ) LT
+        OUTER APPLY (
+          SELECT TOP 1 Oxigeno FROM Lecturas
+          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 1
+        ) OM1
+        OUTER APPLY (
+          SELECT TOP 1 Oxigeno FROM Lecturas
+          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 3
+        ) OM3
+        OUTER APPLY (
+          SELECT TOP 1 Valor FROM V_TemperaturasTraceShrimp
+          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = C.Fecha AND Jornada = 'Mañana'
+        ) TM1
+        OUTER APPLY (
+          SELECT TOP 1 Valor FROM V_TemperaturasTraceShrimp
+          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = C.Fecha AND Jornada = 'Tarde'
+        ) TM2
+        WHERE C.IdEstanque = @IdEstanque
+          AND C.Fecha < @Fecha
+        ORDER BY C.Fecha DESC
+      `);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error al obtener historial:', err);
+    res.status(500).json({ error: 'Error al obtener historial', detalle: err.message });
+  }
+});
+
 module.exports = router;
