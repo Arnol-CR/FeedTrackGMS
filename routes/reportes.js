@@ -182,8 +182,15 @@ router.get('/historial', async (req, res) => {
       .input('IdEstanque', sql.Int, idEstanque)
       .input('Fecha', sql.Date, fecha)
       .query(`
-        SELECT TOP 6
-          C.Fecha,
+        ;WITH Fechas AS (
+          SELECT CAST(DATEADD(DAY, -1, @Fecha) AS DATE) AS Fecha, 1 AS N
+          UNION ALL
+          SELECT DATEADD(DAY, -1, Fecha), N + 1
+          FROM Fechas
+          WHERE N < 6
+        )
+        SELECT
+          F.Fecha,
           ISNULL(C.Racion, 0) AS Racion,
           ISNULL(DC.Libras, 0) AS LibrasConsumo,
           CAST(
@@ -201,38 +208,39 @@ router.get('/historial', async (req, res) => {
           OM3.Oxigeno AS OxigenoHora3,
           TM1.Valor AS TemperaturaManana,
           TM2.Valor AS TemperaturaTarde
-        FROM Consumos C
+        FROM Fechas F
+        LEFT JOIN Consumos C
+          ON C.IdEstanque = @IdEstanque AND C.Fecha = F.Fecha
         OUTER APPLY (
           SELECT TOP 1 Libras FROM DetallesConsumos
-          WHERE IdConsumo = C.IdConsumo AND HoraIngreso = 3
+          WHERE IdConsumo = C.IdConsumo AND HoraIngreso = 2
         ) DC
         OUTER APPLY (
           SELECT TOP 1 Observaciones FROM Lecturas
-          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 1
+          WHERE IdEstanque = @IdEstanque AND Fecha = F.Fecha AND IdHora = 1
         ) LM
         OUTER APPLY (
           SELECT TOP 1 Observaciones FROM Lecturas
-          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 2
+          WHERE IdEstanque = @IdEstanque AND Fecha = F.Fecha AND IdHora = 2
         ) LT
         OUTER APPLY (
           SELECT TOP 1 Oxigeno FROM Lecturas
-          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 1
+          WHERE IdEstanque = @IdEstanque AND Fecha = F.Fecha AND IdHora = 1
         ) OM1
         OUTER APPLY (
           SELECT TOP 1 Oxigeno FROM Lecturas
-          WHERE IdEstanque = @IdEstanque AND Fecha = C.Fecha AND IdHora = 3
+          WHERE IdEstanque = @IdEstanque AND Fecha = F.Fecha AND IdHora = 3
         ) OM3
         OUTER APPLY (
           SELECT TOP 1 Valor FROM V_TemperaturasTraceShrimp
-          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = C.Fecha AND Jornada = 'Mañana'
+          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = F.Fecha AND Jornada = 'Mañana'
         ) TM1
         OUTER APPLY (
           SELECT TOP 1 Valor FROM V_TemperaturasTraceShrimp
-          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = C.Fecha AND Jornada = 'Tarde'
+          WHERE IdEstanqueCiclo = C.IdEstanqueCiclo AND Fecha = F.Fecha AND Jornada = 'Tarde'
         ) TM2
-        WHERE C.IdEstanque = @IdEstanque
-          AND C.Fecha < @Fecha
-        ORDER BY C.Fecha DESC
+        ORDER BY F.Fecha DESC
+        OPTION (MAXRECURSION 10)
       `);
 
     res.json(result.recordset);
