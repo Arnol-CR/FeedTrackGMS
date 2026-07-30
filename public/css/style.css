@@ -189,3 +189,77 @@ th, td {
   background: #6b7280;
   margin-right: 0.5rem;
 }
+
+
+/* ===== Responsive: pantallas chicas (celular/tablet) ===== */
+@media (max-width: 768px) {
+
+  .contenido {
+    padding: 1rem !important;
+  }
+
+  section {
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Filtros: uno debajo del otro, ancho completo */
+  #form-reporte {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campo-reporte {
+    min-width: 100%;
+  }
+
+  #form-reporte button {
+    width: 100%;
+  }
+
+  /* Encabezado de Resultados + botones: apilados */
+  .contenedor-reportes > div:first-child {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  #btn-exportar-excel,
+  #btn-copiar-imagen {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tabla: fuente y espacios más chicos para que quepa más */
+  #tabla-reporte thead th {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  #tabla-reporte td {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  /* Inputs de Ajuste 1/2 y Ración día siguiente, más angostos */
+  #tabla-reporte input {
+    width: 55px !important;
+    padding: 0.3rem !important;
+    font-size: 0.8rem;
+  }
+
+  /* Círculos de O2/Temperatura, un poco más chicos */
+  #tabla-reporte span[style*="border-radius:50%"] {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Badges de texto (BARRIDA, PAUSA, etc.) más compactos */
+  #tabla-reporte span {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* Scroll horizontal más suave en iOS para la tabla */
+.contenedor-reportes div[style*="overflow-x:auto"] {
+  -webkit-overflow-scrolling: touch;
+}
