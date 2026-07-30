@@ -192,14 +192,14 @@ function renderTabla(filas, mapaRacionesExistentes = {}, mapaAjustesExistentes =
 <td>${badgeEstado(f.LecturaMañana)}</td>
 <td>${badgeEstado(f.LecturaTarde)}</td>
       <td>
-        <div style="display:flex; gap:0.4rem; align-items:center; justify-content:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:0.15rem;">
           <input type="text" inputmode="decimal" placeholder="Ración"
               id="racion-siguiente-${i}" name="racion-siguiente-${i}" autocomplete="off" value="${valorInicialRacion}"
               oninput="onCambioRacion(${i}, ${f.IdEstanque})"
               onfocus="limpiarCampoParaEditar(this)"
               onblur="formatearCampo(this)"
               style="width:100%; box-sizing:border-box; padding:0.4rem; border:1px solid #cbd2d9; border-radius:4px; text-align:center;">
-          <span id="estado-racion-${i}" style="font-size:0.8rem;"></span>
+          <span id="estado-racion-${i}" style="font-size:0.7rem; white-space:nowrap;"></span>
         </div>
       </td>
     </tr>

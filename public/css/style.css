@@ -18,6 +18,7 @@
 
 #tabla-reporte {
   width: 100%;
+  table-layout: fixed;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
