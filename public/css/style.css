@@ -239,12 +239,20 @@ th, td {
     font-size: 0.8rem;
   }
 
-  /* Inputs de Ajuste 1/2 y Ración día siguiente, más angostos */
-  #tabla-reporte input {
-    width: 55px !important;
-    padding: 0.3rem !important;
-    font-size: 0.8rem;
-  }
+/* Ración día siguiente: un poco más ancho */
+#tabla-reporte input[id^="racion-siguiente"] {
+  width: 55px !important;
+  padding: 0.3rem !important;
+  font-size: 0.8rem;
+}
+
+/* Ajuste 1 y 2: más angostos */
+#tabla-reporte input[id^="ajuste1"],
+#tabla-reporte input[id^="ajuste2"] {
+  width: 35px !important;
+  padding: 0.25rem !important;
+  font-size: 0.75rem;
+}
 
   /* Círculos de O2/Temperatura, un poco más chicos */
   #tabla-reporte span[style*="border-radius:50%"] {

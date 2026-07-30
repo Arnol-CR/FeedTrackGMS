@@ -175,14 +175,14 @@ function renderTabla(filas, mapaRacionesExistentes = {}, mapaAjustesExistentes =
           oninput="onCambioAjuste(${i}, ${f.IdEstanque})"
           onfocus="limpiarCampoParaEditar(this)"
           onblur="formatearCampo(this)"
-          style="width:65px; padding:0.4rem; border:1px solid #cbd2d9; border-radius:4px; text-align:center;">
+          style="width:45px; padding:0.4rem; border:1px solid #cbd2d9; border-radius:4px; text-align:center;">
       </td>
       <td>
        <input type="text" inputmode="decimal" id="ajuste2-${i}" name="ajuste2-${i}" autocomplete="off" value="${valorAjuste2}"
        oninput="onCambioAjuste(${i}, ${f.IdEstanque})"
        onfocus="limpiarCampoParaEditar(this)"
        onblur="formatearCampo(this)"
-       style="width:65px; padding:0.4rem; border:1px solid #cbd2d9; border-radius:4px; text-align:center;">
+       style="width:45px; padding:0.4rem; border:1px solid #cbd2d9; border-radius:4px; text-align:center;">
 
         <span id="estado-ajuste-${i}" style="font-size:0.8rem; display:block; margin-top:0.2rem;"></span>
       </td>
