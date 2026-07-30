@@ -76,11 +76,11 @@ form.addEventListener('submit', async (e) => {
       return;
     }
 
-    const filas = data.filter(f =>
+const filas = data.filter(f =>
       Number(f.Racion) > 0 ||
       (f.LecturaMañana && f.LecturaMañana.trim() !== '') ||
       (f.LecturaTarde && f.LecturaTarde.trim() !== '')
-    );
+    ).sort((a, b) => compararLagunas(a.NombreRecipiente, b.NombreRecipiente));
 
     if (filas.length === 0) {
       mostrarError('No hay datos para los filtros seleccionados');
@@ -295,6 +295,19 @@ function formatearFecha(fechaISO) {
   return `${dia}/${mes}/${anio}`;
 }
 
+function compararLagunas(a, b) {
+  const parsear = (texto) => {
+    const match = String(texto ?? '').trim().match(/^(\d+)([A-Za-z]*)/);
+    if (!match) return { numero: Infinity, letra: String(texto ?? '') };
+    return { numero: parseInt(match[1], 10), letra: match[2] || '' };
+  };
+
+  const pa = parsear(a);
+  const pb = parsear(b);
+
+  if (pa.numero !== pb.numero) return pa.numero - pb.numero;
+  return pa.letra.localeCompare(pb.letra);
+}
 
 function onCambioAjuste(indice, idEstanque) {
   const estado = document.getElementById(`estado-ajuste-${indice}`);
@@ -629,3 +642,5 @@ async function copiarImagen() {
     document.body.removeChild(temp);
   }
 }
+
+
