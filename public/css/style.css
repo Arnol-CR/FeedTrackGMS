@@ -247,12 +247,12 @@ th, td {
 }
 
 /* Ajuste 1 y 2: más angostos */
+/*
 #tabla-reporte input[id^="ajuste1"],
 #tabla-reporte input[id^="ajuste2"] {
-  width: 35px !important;
-  padding: 0.25rem !important;
-  font-size: 0.75rem;
+  width: 45px !important;
 }
+*/
 
   /* Círculos de O2/Temperatura, un poco más chicos */
   #tabla-reporte span[style*="border-radius:50%"] {
